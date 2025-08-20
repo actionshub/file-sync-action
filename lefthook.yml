@@ -1,0 +1,59 @@
+# EXAMPLE USAGE:
+#
+#   Refer for explanation to following link:
+#   https://lefthook.dev/configuration/
+#
+pre-push:
+  jobs:
+    - name: npm audit
+      tags:
+        - frontend
+        - security
+      run: npm audit
+
+pre-commit:
+  parallel: true
+  jobs:
+    - run: npm run lint:md
+      glob: "*.{md,mdx}"
+    - name: secret detection
+      tags:
+        - security
+      run: |
+        # Check for common secret patterns in staged files
+        SECRET_PATTERN="(password|passwd|pwd|secret|key|token|api_key|apikey|access_key|private_key)"
+        git diff --cached --name-only | \
+          xargs grep -l -E "$SECRET_PATTERN" 2>/dev/null | \
+          while read file; do
+            echo "⚠️  Potential secret found in: $file"
+            git diff --cached "$file" | \
+              grep -n -E "$SECRET_PATTERN" --color=always
+            echo ""
+          done
+
+        # Check for specific credential patterns
+        KEYS_PATTERN="BEGIN (RSA |DSA |EC |OPENSSH )?PRIVATE KEY"
+        SSH_PATTERN="ssh-(rsa|dss|ed25519)"
+        AWS_PATTERN="AKIA[0-9A-Z]{16}"
+        GOOGLE_PATTERN="(ya29\.|AIza[0-9A-Za-z\\-_]{35})"
+        STRIPE_PATTERN="(sk_live_[0-9a-zA-Z]{24}|rk_live_[0-9a-zA-Z]{24})"
+        SQUARE_PATTERN="sq0csp-[0-9A-Za-z\\-_]{43}"
+        GITHUB_PATTERN="(ghp_[A-Za-z0-9_]{36}|github_pat_[a-zA-Z0-9_]{82})"
+
+        FULL_CRED_PATTERN="($KEYS_PATTERN|$SSH_PATTERN|$AWS_PATTERN|$GOOGLE_PATTERN|$STRIPE_PATTERN|$SQUARE_PATTERN|$GITHUB_PATTERN)"
+
+        if git diff --cached | grep -qE "$FULL_CRED_PATTERN"; then
+          echo "🚨 CRITICAL: Detected potential credentials in commit!"
+          echo "Please review your changes and remove sensitive information."
+          exit 1
+        fi
+
+        # Check for common environment variable patterns
+        EXPORT_PATTERN="export .*(PASSWORD|SECRET|KEY|TOKEN)"
+        VAR_PATTERN="[A-Z_]*(PASSWORD|SECRET|KEY|TOKEN)[A-Z_]*="
+        ENV_PATTERN="($EXPORT_PATTERN|$VAR_PATTERN)"
+
+        if git diff --cached | grep -qE "$ENV_PATTERN"; then
+          echo "⚠️  WARNING: Detected potential env vars with sensitive names"
+          echo "Please ensure these don't contain actual secrets."
+        fi
