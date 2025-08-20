@@ -1,0 +1,15 @@
+{
+  // Globs for markdown files
+  "globs": [
+    "**/*.md",
+    "!node_modules/**",
+    "!dist/**"
+  ],
+  // Pass options to markdownlint
+  "markdownlint": {
+    "config": {
+      // Base ruleset: enable all default rules
+      "default": true
+    }
+  }
+}

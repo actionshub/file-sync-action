@@ -1,0 +1,4 @@
+---
+owner/repository:
+  - .github/workflows/test.yml
+  - .github/workflows/lint.yml

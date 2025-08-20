@@ -1,0 +1,194 @@
+---
+name: "Repo Sync by Topics"
+
+branding:
+  icon: "refresh-cw"
+  color: "blue"
+
+description: >-
+  Sync a subfolder from a source repository to multiple target repositories
+  discovered by GitHub topics. Creates or updates pull requests with
+  labels/assignees/reviewers. Designed for reusability.
+
+runs:
+  using: "node20"
+  main: "dist/index.js"
+
+inputs:
+  token:
+    description: >-
+      GitHub token with permissions to read the source repo and push branches
+      and open PRs on target repositories (e.g. GitHub App installation token
+      or PAT).
+    required: true
+  source_repo:
+    description: "Source repository in <owner>/<repo> format"
+    required: true
+  source_path:
+    description: >-
+      Path in the source repository to copy (e.g. standardfiles/cookbook)
+    required: true
+  target_org:
+    description: "Organization to search for target repositories"
+    required: true
+  search_topics:
+    description: >-
+      Comma-separated list of GitHub topics to filter repositories (e.g.
+      chef-cookbook)
+    required: true
+  topics:
+    description: >-
+      Alias for search_topics for backward compatibility. Comma-separated
+      list of GitHub topics to filter repositories.
+    required: false
+    default: ""
+  branch_name:
+    description: >-
+      Branch name to create/update on targets (default computed if omitted)
+    required: false
+    default: ""
+  commit_prefix:
+    description: >-
+      Prefix for commit message (e.g. 'chore: ')
+    required: false
+    default: ""
+  pr_title:
+    description: >-
+      Pull request title
+    required: false
+    default: ""
+  pr_body:
+    description: >-
+      Pull request body
+    required: false
+    default: ""
+  labels:
+    description: >-
+      Newline-separated labels to apply to PRs
+    required: false
+    default: ""
+  pr_tags:
+    description: >-
+      Optional PR tags/labels to add to created PRs. Provide as a YAML/JSON
+      array or newline-separated string.
+    required: false
+    default: ""
+  assignees:
+    description: >-
+      Newline-separated GitHub usernames to assign
+    required: false
+    default: ""
+  reviewers:
+    description: >-
+      Newline-separated GitHub usernames to request review from
+    required: false
+    default: ""
+  team_reviewers:
+    description: >-
+      Newline-separated GitHub team slugs to request review from
+    required: false
+    default: ""
+  dry_run:
+    description: >-
+      If true, do not push branches or open PRs
+    required: false
+    default: "false"
+
+  # Compatibility inputs inspired by repo-file-sync-action
+  GH_PAT:
+    description: >-
+      GitHub Personal Access Token to use to get repos and write secrets
+    required: false
+  GH_INSTALLATION_TOKEN:
+    description: >-
+      GitHub App Installation Token to use to access repos
+    required: false
+  CONFIG_PATH:
+    description: >-
+      Path to sync configuration file (see README for format)
+    required: false
+  IS_FINE_GRAINED:
+    description: >-
+      Label GH_PAT as a fine grained token
+    required: false
+  PR_LABELS:
+    description: >-
+      Labels to add to the pull request; set to false to disable
+    required: false
+  PR_BODY:
+    description: >-
+      Additional content to add to the PR description
+    required: false
+  ASSIGNEES:
+    description: >-
+      Users to assign to the pull request
+    required: false
+  REVIEWERS:
+    description: >-
+      Users to request a review from
+    required: false
+  TEAM_REVIEWERS:
+    description: >-
+      Teams to request a review from
+    required: false
+  COMMIT_PREFIX:
+    description: >-
+      Prefix for commit message and pull request title (e.g. "🔄")
+    required: false
+  COMMIT_BODY:
+    description: >-
+      Commit message body appended after two line breaks
+    required: false
+  COMMIT_EACH_FILE:
+    description: >-
+      Commit each file separately (true/false)
+    required: false
+  GIT_EMAIL:
+    description: >-
+      Email used for commits
+    required: false
+  GIT_USERNAME:
+    description: >-
+      Username used for commits
+    required: false
+  TMP_DIR:
+    description: >-
+      Working directory where sync operations occur
+    required: false
+  DRY_RUN:
+    description: >-
+      Run without updating any repositories (uppercase alternative)
+    required: false
+  SKIP_CLEANUP:
+    description: >-
+      Skip removing the temporary directory (useful for debugging)
+    required: false
+  OVERWRITE_EXISTING_PR:
+    description: >-
+      Overwrite an existing sync PR with new changes
+    required: false
+  ORIGINAL_MESSAGE:
+    description: >-
+      Re-use the original commit message (when applicable)
+    required: false
+  COMMIT_AS_PR_TITLE:
+    description: >-
+      Re-use the commit message as PR title (when applicable)
+    required: false
+  SKIP_PR:
+    description: >-
+      Skip creating a Pull Request and push directly
+    required: false
+  BRANCH_PREFIX:
+    description: >-
+      Different prefix for the new branch in the target repo
+    required: false
+  FORK:
+    description: >-
+      User account used for fork and pull-request workflow
+    required: false
+
+outputs:
+  pull_request_urls:
+    description: >-
+      Newline-separated list of created/updated pull request URLs

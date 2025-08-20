@@ -1,0 +1,22 @@
+name: Repo Sync Example 2
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Repo sync (example 2 — config override)
+        uses: actionshub/repo-sync-action@main
+        with:
+          token: ${{ secrets.GH_PAT }}
+          source_repo: sous-chefs/repo-management
+          source_path: standardfiles/cookbook
+          target_org: sous-chefs
+          search_topics: chef-cookbook
+          CONFIG_PATH: .github/sync-test-2.yml
+          dry_run: 'true' # set to 'false' to actually push branches and open PRs

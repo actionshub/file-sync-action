@@ -1,0 +1,64 @@
+{
+  "name": "repo-sync-action",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sync subfolders from a source repo to repositories discovered by GitHub topics.",
+  "main": "dist/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "dist",
+    "action.yml",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "bundle": "npm run build && ncc build lib/index.js -o dist",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "watch": "npm-watch",
+    "lint:md": "markdownlint-cli2"
+  },
+  "keywords": [
+    "github-action",
+    "sync",
+    "topics",
+    "repos"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/github": "^6.0.1",
+    "@octokit/plugin-paginate-rest": "^13.1.1",
+    "@octokit/rest": "^22.0.0",
+    "fs-extra": "^11.3.1",
+    "glob": "^11.0.3",
+    "simple-git": "^3.28.0",
+    "yaml": "^2.8.1",
+    "zod": "^4.0.17"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^24.2.1",
+    "@vercel/ncc": "^0.38.3",
+    "markdownlint-cli2": "^0.15.0",
+    "npm-watch": "^0.13.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "watch": {
+    "test": {
+      "patterns": [
+        "src",
+        "tests"
+      ],
+      "extensions": "ts,tsx,js,json",
+      "ignore": [
+        "dist",
+        "node_modules"
+      ]
+    }
+  }
+}

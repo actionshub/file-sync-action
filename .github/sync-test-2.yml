@@ -1,0 +1,4 @@
+---
+owner/repository:
+  - source: templates/README.md
+    dest: README.md
