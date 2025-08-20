@@ -43,7 +43,7 @@
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^24.2.1",
     "@vercel/ncc": "^0.38.3",
-    "markdownlint-cli2": "^0.15.0",
+    "markdownlint-cli2": "^0.18.0",
     "npm-watch": "^0.13.0",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
